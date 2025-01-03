@@ -7,7 +7,7 @@
 ;;         Dante Catalfamo <dante@lambda.cx>
 ;; URL: https://github.com/zachmassia/platformio-mode
 ;; Version: 0.3.0
-;; Package-Requires: ((emacs "25.1") (async "1.9.0") (projectile "0.13.0"))
+;; Package-Requires: ((emacs "25.1") (async "1.9.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -36,7 +36,6 @@
 (require 'json)
 (require 'async)
 (require 'seq)
-(require 'projectile)
 (require 'compile)
 
 ;;; Customization
@@ -79,26 +78,29 @@
   "Deprecated function."
   (warn "The function platformio-setup-compile-buffer is deprecated, remove it from your config!"))
 
+(defun platformio-project-root ()
+  "Return the file path of the project root of the current buffer."
+  (when-let ((proj (project-current)))
+    (expand-file-name (project-root proj))))
+
 ;;;###autoload
 (defun platformio-conditionally-enable ()
   "Enable `platformio-mode' only when a `platformio.ini' file is present in project root."
   (condition-case nil
-      (when (projectile-verify-file "platformio.ini")
+      (when (directory-files-recursively (platformio-project-root) "platformio.ini")
         (platformio-mode 1))
     (error nil)))
-
 
 ;;; Internal functions
 (defun platformio--exec (target)
   "Call `platformio ... TARGET' in the root of the project."
-  (let ((default-directory (projectile-project-root))
+  (let ((default-directory (platformio-project-root))
         (cmd (concat "platformio -f -c emacs " target)))
     (unless default-directory
-      (user-error "Not in a projectile project, aborting"))
+      (user-error "Not in a project.el project, aborting"))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
-                         (projectile-project-buffer-p (current-buffer)
-                                                      default-directory)))
+                         (equal (platformio-project-root) default-directory)))
     (compilation-start cmd 'platformio-compilation-mode)))
 
 (defun platformio--silent-arg ()
