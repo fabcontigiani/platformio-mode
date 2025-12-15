@@ -6,9 +6,7 @@
 ;; Author: Zach Massia <zmassia@gmail.com>
 ;;         Dante Catalfamo <dante@lambda.cx>
 ;; URL: https://github.com/zachmassia/platformio-mode
-;; Package-Version: 20210511.957
-;; Package-Commit: f4fd8932995a8aed80eab14e54232010c2889012
-;; Version: 0.3.0
+;; Version: 0.3.1
 ;; Package-Requires: ((emacs "25.1") (async "1.9.0"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -42,7 +40,7 @@
 
 ;;; Customization
 (defgroup platformio nil
-  "PlatformIO integration for Emacs"
+  "PlatformIO integration for Emacs."
   :prefix "platformio-" :group 'tools
   :link '(url-link :tag "PlatformIO Documentation" "docs.platformio.org/en/latest/")
   :link '(url-link :tag "Submit PlatformIO Issue" "https://github.com/platformio/platformio/issues/"))
