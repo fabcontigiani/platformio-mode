@@ -136,47 +136,48 @@
   "Return a list of all boards supported by PlatformIO."
   (setq revert-buffer-in-progress-p t)
   (setq mode-line-process ":refreshing")
-  (async-start
-   (lambda ()
-     (require 'seq)
-     (require 'json)
-     (setq out nil)
-     (seq-map
-      (lambda (board)
-        (push (list (alist-get 'id board)
-                    (vector
-                     `("Add" action
-                       (lambda (_button) (platformio--add-board ,(alist-get 'id board))))
-                     (alist-get 'name board)
-                     (alist-get 'id board)
-                     (alist-get 'mcu board)
-                     (alist-get 'platform board)
-                     (number-to-string (alist-get 'fcpu board))
-                     (number-to-string (alist-get 'ram board))
-                     (number-to-string (alist-get 'rom board))
-                     (string-join (alist-get 'frameworks board) ", ")
-                     (alist-get 'vendor board)
-                     `("URL" action
-                       (lambda (_button)
-                         (browse-url-default-browser ,(alist-get 'url board))))
-                     `("Docs" action
-                       (lambda (_button)
-                         (browse-url-default-browser ,(string-join (list "https://docs.platformio.org/en/latest/boards/"
-                                                                         (alist-get 'platform board)
-                                                                         "/"
-                                                                         (alist-get 'id board)
-                                                                         ".html")))))))
-              out))
-      (json-read-from-string
-       (shell-command-to-string "platformio boards --json-output")))
-     (nreverse out))
-
-   (lambda (result)
-     (with-current-buffer platformio-board-list-buffer
-       (setq tabulated-list-entries result)
-       (tabulated-list-revert)
-       (setq revert-buffer-in-progress-p nil)
-       (setq mode-line-process "")))))
+  (let* (out
+         (start-func (lambda ()
+                       (require 'seq)
+                       (require 'json)
+                       (setq out nil)
+                       (seq-map
+                        (lambda (board)
+                          (push (list (alist-get 'id board)
+                                      (vector
+                                       `("Add" action
+                                         (lambda (_button) (platformio--add-board ,(alist-get 'id board))))
+                                       (alist-get 'name board)
+                                       (alist-get 'id board)
+                                       (alist-get 'mcu board)
+                                       (alist-get 'platform board)
+                                       (number-to-string (alist-get 'fcpu board))
+                                       (number-to-string (alist-get 'ram board))
+                                       (number-to-string (alist-get 'rom board))
+                                       (string-join (alist-get 'frameworks board) ", ")
+                                       (alist-get 'vendor board)
+                                       `("URL" action
+                                         (lambda (_button)
+                                           (browse-url-default-browser ,(alist-get 'url board))))
+                                       `("Docs" action
+                                         (lambda (_button)
+                                           (browse-url-default-browser ,(string-join (list "https://docs.platformio.org/en/latest/boards/"
+                                                                                           (alist-get 'platform board)
+                                                                                           "/"
+                                                                                           (alist-get 'id board)
+                                                                                           ".html")))))))
+                                out))
+                        (json-read-from-string
+                         (shell-command-to-string "platformio boards --json-output")))
+                       (nreverse out)))
+         (result-func (lambda (result)
+                        (with-current-buffer platformio-board-list-buffer
+                          (setq tabulated-list-entries result)
+                          (tabulated-list-revert)
+                          (setq revert-buffer-in-progress-p nil)
+                          (setq mode-line-process ""))))
+         (result (funcall start-func)))
+    (funcall result-func result)))
 
 (define-derived-mode platformio-boards-mode tabulated-list-mode "PlatformIO-Boards"
   "PlatformIO boards mode."
