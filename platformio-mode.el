@@ -6,7 +6,7 @@
 ;; Author: Zach Massia <zmassia@gmail.com>
 ;;         Dante Catalfamo <dante@lambda.cx>
 ;; URL: https://github.com/zachmassia/platformio-mode
-;; Version: 0.3.1
+;; Version: 0.4.0
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; This file is NOT part of GNU Emacs.
