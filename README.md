@@ -1,20 +1,26 @@
-# PlatformIO Mode
-[![MELPA](https://melpa.org/packages/platformio-mode-badge.svg)](https://melpa.org/#/platformio-mode)
-[![MELPA Stable](https://stable.melpa.org/packages/platformio-mode-badge.svg)](https://stable.melpa.org/#/platformio-mode)
+> [!NOTE]
+> This is a fork of `platformio-mode` from MELPA, mostly focused on merging some
+> unattended PRs and adding a few bits of functionality I find useful for myself.
+
+# 👽 `platformio-mode`
+<!-- [![MELPA](https://melpa.org/packages/platformio-mode-badge.svg)](https://melpa.org/#/platformio-mode) -->
+<!-- [![MELPA Stable](https://stable.melpa.org/packages/platformio-mode-badge.svg)](https://stable.melpa.org/#/platformio-mode) -->
 
 
-`platformio-mode` is an Emacs minor mode which allows quick building and uploading of
-PlatformIO projects with a few short key sequences.
+`platformio-mode` is an Emacs minor mode which allows quick building and
+uploading of PlatformIO projects with a few short key sequences.
 
-Code completion can be provided by installing any package compatible with `.ccls` files,
-such as [ccls](https://github.com/MaskRay/emacs-ccls). To keep the index up to date, run
-`platformio-init-update-workspace` (`C-c i i`) after installing any libraries.
+Code completion can be provided either by installing a .ccls‑compatible package
+such as ccls, or via LSP (`eglot` or `lsp‑mode`) using a language server like
+clangd or ccls. To keep the index up to date run
+`platformio-init-update-workspace` after installing libraries; if you use clangd
+you can generate the required compilation database with
+`platformio-generate-compiledb`.
 
 
 ## Dependencies
 
-Currently the only dependency is [Projectile](https://github.com/bbatsov/projectile)
-to facilitate running commands in the project root.
+No extra dependencies, besides Emacs 25.1 or later.
 
 
 ## Keymap
@@ -33,23 +39,24 @@ The following keybindings are currently available.
 | Clean                   | `C-c i c` |
 | Update                  | `C-c i d` |
 | Update Workspace        | `C-c i i` |
+| Generate compilation db | `C-c i g` |
 | Boards List             | `C-c i l` |
 
 
 ## Installation
 
-The recommended way to install PlatformIO-Mode is using [MELPA](https://melpa.org/).
-
-### Configuration
-
-Here is a sample config using PlatformIO-Mode in conjunction with [ccls](https://github.com/MaskRay/emacs-ccls).
+### elpaca
 
 ```elisp
-(require 'platformio-mode)
+(use-package platformio-mode
+    :ensure (:host github :repo "fabcontigiani/platformio-mode")
+    :commands (platformio-mode))
+```
 
-;; Enable ccls for all c++ files, and platformio-mode only
-;; when needed (platformio.ini present in project root).
-(add-hook 'c++-mode-hook (lambda ()
-                           (lsp-deferred)
-                           (platformio-conditionally-enable)))
+### package.el
+
+```elisp
+(use-package platformio-mode
+    :vc (:url "https://github.com/fabcontigiani/platformio-mode.git")
+    :commands (platformio-mode))
 ```
