@@ -262,6 +262,7 @@
     (define-key map (kbd "c") #'platformio-clean)
     (define-key map (kbd "d") #'platformio-update)
     (define-key map (kbd "i") #'platformio-init-update-workspace)
+    (define-key map (kbd "g") #'platformio-generate-compiledb)
     (define-key map (kbd "m") #'platformio-device-monitor)
     (define-key map (kbd "l") #'platformio-boards)
     map)
